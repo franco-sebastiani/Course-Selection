@@ -115,6 +115,8 @@
   .w2 .paddle { fill: #000; transform-box: fill-box; transform-origin: center; transition: transform .35s ease-out; }
   .w2 .gate2.open .light { fill: #fff; }
   .w2 .gate2.open .paddle { transform: scaleX(.2); }
+  /* thin black edge on station fittings so they stay visible when a white train is behind them */
+  #plat2 > :not(:nth-child(-n+2)), #platformObjects { filter: drop-shadow(0 0 .5px #000) drop-shadow(0 0 .5px #000); }
   .w2 .pole2 { fill: #fff; stroke: #000; stroke-width: .4; stroke-dasharray: 2 2; }
   .w2 .door2 { fill: #fff; stroke: #000; stroke-width: .7; transform-box: fill-box; transform-origin: left center; transition: transform .45s ease-out; }
   .w2 .door2.open { transform: scaleX(.2); }
@@ -630,6 +632,8 @@
       return new Promise(r => setTimeout(r, t * 1000 + 30));
     };
     walker.style.opacity = 0;
+    walker.classList.add('contrast');                  // outlined while the white train is behind him
+    setTimeout(() => walker.classList.remove('contrast'), reduced ? 0 : 5500);
     await place(0, 0, 0, 0);
     interior.classList.remove('on');                   // fade up on the platform
     await wait(400);
