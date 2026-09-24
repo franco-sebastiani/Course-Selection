@@ -104,7 +104,10 @@
   .front { position: absolute; left: 0; top: 0; bottom: 0; width: 0; overflow: hidden; pointer-events: none; }
 
   /* Second station, where he gets off */
-  .world2 { position: absolute; left: -1200px; top: -80px; width: 3000px; height: 200px; visibility: hidden; will-change: transform; }
+  .world2 { position: absolute; left: -1200px; top: -80px; width: 3000px; height: 200px; visibility: hidden; will-change: transform; contain: paint; }
+  /* Keep the second-station scenery in its own paint layer so changing the train
+     visibility/transform cannot briefly drop the station fittings during getOff(). */
+  .world2 .w2 { isolation: isolate; }
   .w2in { position: absolute; left: 1200px; top: 80px; width: 1px; height: 1px; }
   .w2 { position: absolute; left: -800px; top: -50px; width: 1300px; height: 80px; overflow: visible; }
   .w2 .fg { fill: #fff; } .w2 .bk { fill: #000; }
@@ -640,8 +643,10 @@
     walker.classList.add('contrast');                  // outlined while the white train is behind him
     setTimeout(() => walker.classList.remove('contrast'), reduced ? 0 : 5500);
     await place(0, 0, 0, 0);
+    // The new station is already mounted and positioned before the blackout is
+    // lifted. This avoids a brief frame in which the station fittings disappear.
     interior.classList.remove('on');                   // fade up on the platform
-    await wait(400);
+    await wait(250);
     // steps off
     setMoving(true);
     await walker.animate([{ opacity: 0, transform: 'translateY(-2px)' }, { opacity: 1, transform: 'translateY(0)' }],
